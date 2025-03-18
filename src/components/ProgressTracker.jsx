@@ -105,69 +105,71 @@ const ProgressTracker = ({ completed, total }) => {
           </div>
         </div>
 
-        <div className="chart-container">
-          <ResponsiveContainer width="100%" height={250}>
-            <PieChart>
-              {filteredData.length > 0 && (
-                <Pie
-                  data={filteredData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
-                  dataKey="value"
-                  startAngle={90}
-                  endAngle={-270}
-                >
-                  {filteredData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={entry.color}
-                      stroke="transparent"
+        <div className="chart-with-legend">
+          <div className="chart-container">
+            <ResponsiveContainer width="100%" height={250}>
+              <PieChart>
+                {filteredData.length > 0 && (
+                  <Pie
+                    data={filteredData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                    startAngle={90}
+                    endAngle={-270}
+                  >
+                    {filteredData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.color}
+                        stroke="transparent"
+                      />
+                    ))}
+                    <Label
+                      content={({ viewBox }) => {
+                        const { cx, cy } = viewBox;
+                        return (
+                          <text
+                            x={cx}
+                            y={cy}
+                            textAnchor="middle"
+                            dominantBaseline="middle"
+                          >
+                            <tspan
+                              x={cx}
+                              y={cy - 5}
+                              className="donut-label-value"
+                              style={{
+                                fontSize: "1.5rem",
+                                fontWeight: "bold",
+                                fill: "var(--text-primary)",
+                              }}
+                            >
+                              {completionPercentage}%
+                            </tspan>
+                            <tspan
+                              x={cx}
+                              y={cy + 15}
+                              style={{
+                                fontSize: "0.75rem",
+                                fill: "var(--text-secondary)",
+                              }}
+                            >
+                              completed
+                            </tspan>
+                          </text>
+                        );
+                      }}
                     />
-                  ))}
-                  <Label
-                    content={({ viewBox }) => {
-                      const { cx, cy } = viewBox;
-                      return (
-                        <text
-                          x={cx}
-                          y={cy}
-                          textAnchor="middle"
-                          dominantBaseline="middle"
-                        >
-                          <tspan
-                            x={cx}
-                            y={cy - 5}
-                            className="donut-label-value"
-                            style={{
-                              fontSize: "1.5rem",
-                              fontWeight: "bold",
-                              fill: "var(--text-primary)",
-                            }}
-                          >
-                            {completionPercentage}%
-                          </tspan>
-                          <tspan
-                            x={cx}
-                            y={cy + 15}
-                            style={{
-                              fontSize: "0.75rem",
-                              fill: "var(--text-secondary)",
-                            }}
-                          >
-                            completed
-                          </tspan>
-                        </text>
-                      );
-                    }}
-                  />
-                </Pie>
-              )}
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+                  </Pie>
+                )}
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
 
           <Legend />
         </div>
