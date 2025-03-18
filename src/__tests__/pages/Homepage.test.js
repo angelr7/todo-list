@@ -52,9 +52,12 @@ describe("HomePage", () => {
     expect(
       screen.getByText(/Get started by creating your first task/i)
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: /Get Started/i })
+    ).toBeInTheDocument();
   });
 
-  test("renders TaskProgressTracker when tasks are present", () => {
+  test("renders ProgressTracker when tasks are present", () => {
     store = configureStore({
       reducer: { todos: todoReducer },
       preloadedState: {
@@ -85,8 +88,7 @@ describe("HomePage", () => {
       </Provider>
     );
 
-    expect(screen.getByText(/Task Progress/i)).toBeInTheDocument();
-    expect(screen.getByText(/Total Tasks/i)).toBeInTheDocument();
+    expect(screen.getByText(/Progress Tracker/i)).toBeInTheDocument();
   });
 
   test("calculates and displays correct completion percentage", () => {
@@ -112,7 +114,8 @@ describe("HomePage", () => {
       </Provider>
     );
 
-    expect(screen.getByText(/50%/i)).toBeInTheDocument();
+    const percentageElements = screen.getAllByText(/50%/i);
+    expect(percentageElements.length).toBeGreaterThan(0);
   });
 
   test("displays 0% progress when there are no completed tasks", () => {
@@ -136,6 +139,36 @@ describe("HomePage", () => {
       </Provider>
     );
 
-    expect(screen.getByText(/0%/i)).toBeInTheDocument();
+    const percentageElements = screen.getAllByText(/0%/i);
+    expect(percentageElements.length).toBeGreaterThan(0);
+  });
+
+  test("renders correct count of total and completed tasks", () => {
+    // Define test data
+    const testTodos = [
+      { id: 1, heading: "Task 1", isComplete: true },
+      { id: 2, heading: "Task 2", isComplete: false },
+      { id: 3, heading: "Task 3", isComplete: false },
+    ];
+
+    const totalTasks = testTodos.length;
+    const completedTasks = testTodos.filter((todo) => todo.isComplete).length;
+
+    store = configureStore({
+      reducer: { todos: todoReducer },
+      preloadedState: {
+        todos: { todos: testTodos, status: "idle", error: null },
+      },
+    });
+
+    render(
+      <Provider store={store}>
+        <HomePage />
+      </Provider>
+    );
+
+    // Use screen.getByText to search for numbers directly
+    expect(screen.getByText(totalTasks.toString())).toBeInTheDocument();
+    expect(screen.getByText(completedTasks.toString())).toBeInTheDocument();
   });
 });
