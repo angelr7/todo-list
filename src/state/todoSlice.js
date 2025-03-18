@@ -1,17 +1,18 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import {
+  createSlice,
+  createAsyncThunk,
+  createSelector,
+} from "@reduxjs/toolkit";
+import axios from "axios";
 
 /**
  * Fetches all todo items from the API
  * @returns {Promise<Array>} Promise that resolves to an array of todo items
  */
-export const fetchTodos = createAsyncThunk(
-  'todos/fetchTodos',
-  async () => {
-    const response = await axios.get('http://localhost:3001/items');
-    return response.data;
-  }
-);
+export const fetchTodos = createAsyncThunk("todos/fetchTodos", async () => {
+  const response = await axios.get("http://localhost:3001/items");
+  return response.data;
+});
 
 /**
  * Fetches todo items filtered by completion status
@@ -19,9 +20,11 @@ export const fetchTodos = createAsyncThunk(
  * @returns {Promise<Array>} Promise that resolves to filtered todo items
  */
 export const fetchTodosByCompletion = createAsyncThunk(
-  'todos/fetchTodosByCompletion',
+  "todos/fetchTodosByCompletion",
   async (isComplete) => {
-    const response = await axios.get(`http://localhost:3001/items?isComplete=${isComplete}`);
+    const response = await axios.get(
+      `http://localhost:3001/items?isComplete=${isComplete}`
+    );
     return response.data;
   }
 );
@@ -33,16 +36,13 @@ export const fetchTodosByCompletion = createAsyncThunk(
  * @param {string} todoData.body - The description/body content of the todo
  * @returns {Promise<Object>} Promise that resolves to the created todo item
  */
-export const addTodo = createAsyncThunk(
-  'todos/addTodo',
-  async (todoData) => {
-    const response = await axios.post('http://localhost:3001/items', {
-      ...todoData,
-      isComplete: false
-    });
-    return response.data;
-  }
-);
+export const addTodo = createAsyncThunk("todos/addTodo", async (todoData) => {
+  const response = await axios.post("http://localhost:3001/items", {
+    ...todoData,
+    isComplete: false,
+  });
+  return response.data;
+});
 
 /**
  * Updates an existing todo item
@@ -54,9 +54,12 @@ export const addTodo = createAsyncThunk(
  * @returns {Promise<Object>} Promise that resolves to the updated todo item
  */
 export const updateTodo = createAsyncThunk(
-  'todos/updateTodo',
+  "todos/updateTodo",
   async (todoData) => {
-    const response = await axios.put(`http://localhost:3001/items/${todoData.id}`, todoData);
+    const response = await axios.put(
+      `http://localhost:3001/items/${todoData.id}`,
+      todoData
+    );
     return response.data;
   }
 );
@@ -69,11 +72,11 @@ export const updateTodo = createAsyncThunk(
  * @returns {Promise<Object>} Promise that resolves to the updated todo item
  */
 export const toggleTodoCompletion = createAsyncThunk(
-  'todos/toggleTodoCompletion',
+  "todos/toggleTodoCompletion",
   async (todo) => {
     const response = await axios.put(`http://localhost:3001/items/${todo.id}`, {
       ...todo,
-      isComplete: !todo.isComplete
+      isComplete: !todo.isComplete,
     });
     return response.data;
   }
@@ -84,19 +87,16 @@ export const toggleTodoCompletion = createAsyncThunk(
  * @param {number|string} id - The ID of the todo to delete
  * @returns {Promise<number|string>} Promise that resolves to the ID of the deleted todo
  */
-export const deleteTodo = createAsyncThunk(
-  'todos/deleteTodo',
-  async (id) => {
-    await axios.delete(`http://localhost:3001/items/${id}`);
-    return id;
-  }
-);
+export const deleteTodo = createAsyncThunk("todos/deleteTodo", async (id) => {
+  await axios.delete(`http://localhost:3001/items/${id}`);
+  return id;
+});
 
 /**
  * @typedef {Object} TodoState
  * @property {Array} todos - Array of todo items
  * @property {'idle'|'loading'|'succeeded'|'failed'} status - Current status of API requests
- * @property {string|null} error - Error message if any
+ * @property {string|null} error - Error message
  */
 
 /**
@@ -105,7 +105,7 @@ export const deleteTodo = createAsyncThunk(
  */
 const initialState = {
   todos: [],
-  status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+  status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
   error: null,
 };
 
@@ -113,7 +113,7 @@ const initialState = {
  * Redux slice for todo operations
  */
 const todoSlice = createSlice({
-  name: 'todos',
+  name: "todos",
   initialState,
   reducers: {
     /**
@@ -128,54 +128,58 @@ const todoSlice = createSlice({
     builder
       // fetchTodos
       .addCase(fetchTodos.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
       })
       .addCase(fetchTodos.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.status = "succeeded";
         state.todos = action.payload;
       })
       .addCase(fetchTodos.rejected, (state, action) => {
-        state.status = 'failed';
+        state.status = "failed";
         state.error = action.error.message;
       })
-      
+
       // fetchTodosByCompletion
       .addCase(fetchTodosByCompletion.pending, (state) => {
-        state.status = 'loading';
+        state.status = "loading";
       })
       .addCase(fetchTodosByCompletion.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.status = "succeeded";
         state.todos = action.payload;
       })
       .addCase(fetchTodosByCompletion.rejected, (state, action) => {
-        state.status = 'failed';
+        state.status = "failed";
         state.error = action.error.message;
       })
-      
+
       // addTodo
       .addCase(addTodo.fulfilled, (state, action) => {
         state.todos.push(action.payload);
       })
-      
+
       // updateTodo
       .addCase(updateTodo.fulfilled, (state, action) => {
-        const index = state.todos.findIndex(todo => todo.id === action.payload.id);
+        const index = state.todos.findIndex(
+          (todo) => todo.id === action.payload.id
+        );
         if (index !== -1) {
           state.todos[index] = action.payload;
         }
       })
-      
+
       // toggleTodoCompletion
       .addCase(toggleTodoCompletion.fulfilled, (state, action) => {
-        const index = state.todos.findIndex(todo => todo.id === action.payload.id);
+        const index = state.todos.findIndex(
+          (todo) => todo.id === action.payload.id
+        );
         if (index !== -1) {
           state.todos[index] = action.payload;
         }
       })
-      
+
       // deleteTodo
       .addCase(deleteTodo.fulfilled, (state, action) => {
-        state.todos = state.todos.filter(todo => todo.id !== action.payload);
+        state.todos = state.todos.filter((todo) => todo.id !== action.payload);
       });
   },
 });
@@ -184,11 +188,33 @@ const todoSlice = createSlice({
 export const { clearTodos } = todoSlice.actions;
 
 /**
- * Selects all todos from the state
+ * Base selector that selects the todos array from state
  * @param {Object} state - The root state
  * @returns {Array} All todo items
  */
-export const selectAllTodos = (state) => state.todos.todos;
+const selectTodosSlice = (state) => state.todos;
+export const selectAllTodos = createSelector(
+  [selectTodosSlice],
+  (todosSlice) => todosSlice.todos || []
+);
+
+/**
+ * Selector for completed todos
+ * @type {Function}
+ * @returns {Array} Completed todo items
+ */
+export const selectCompletedTodos = createSelector([selectAllTodos], (todos) =>
+  todos.filter((todo) => todo.isComplete)
+);
+
+/**
+ * Selector for incomplete todos
+ * @type {Function}
+ * @returns {Array} Incomplete todo items
+ */
+export const selectIncompleteTodos = createSelector([selectAllTodos], (todos) =>
+  todos.filter((todo) => !todo.isComplete)
+);
 
 /**
  * Selects a specific todo by ID
@@ -196,38 +222,30 @@ export const selectAllTodos = (state) => state.todos.todos;
  * @param {number|string} todoId - The ID of the todo to select
  * @returns {Object|undefined} The todo item or undefined if not found
  */
-export const selectTodoById = (state, todoId) => 
-  state.todos.todos.find(todo => todo.id === todoId);
-
-/**
- * Selects all completed todos
- * @param {Object} state - The root state
- * @returns {Array} Completed todo items
- */
-export const selectCompletedTodos = (state) => 
-  state.todos.todos.filter(todo => todo.isComplete);
-
-/**
- * Selects all incomplete todos
- * @param {Object} state - The root state
- * @returns {Array} Incomplete todo items
- */
-export const selectIncompleteTodos = (state) => 
-  state.todos.todos.filter(todo => !todo.isComplete);
+export const selectTodoById = createSelector(
+  [selectAllTodos, (_, todoId) => todoId],
+  (todos, todoId) => todos.find((todo) => todo.id === todoId)
+);
 
 /**
  * Selects the current API request status
  * @param {Object} state - The root state
  * @returns {'idle'|'loading'|'succeeded'|'failed'} Current status
  */
-export const selectTodoStatus = (state) => state.todos.status;
+export const selectTodoStatus = createSelector(
+  [selectTodosSlice],
+  (todosSlice) => todosSlice.status
+);
 
 /**
  * Selects any error message from the state
  * @param {Object} state - The root state
- * @returns {string|null} Error message if any
+ * @returns {string|null} Error message
  */
-export const selectTodoError = (state) => state.todos.error;
+export const selectTodoError = createSelector(
+  [selectTodosSlice],
+  (todosSlice) => todosSlice.error
+);
 
 // Export reducer
 export default todoSlice.reducer;
