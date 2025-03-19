@@ -1,84 +1,83 @@
-# Getting started
+# Todo Dashboard
 
-This is a sample to-do list web-application that will be extended as part of your coding interview. Please read the notes below before you get started, and good luck!
+## Overview
 
-Run `npm install` and `npm start` from the root of this directory to get started! Your tasks are defined in `INSTRUCTIONS.md`
+Todo Dashboard (TaskFlow) is a modern task management application built with React and Redux, offering an intuitive interface for creating, organizing, and tracking tasks. The app features a responsive design, accessibility support, and smooth UI interactions.
 
-**Make sure to fork this repository and add your final implementation to Github**. This is critical for code evaluation.
+For a detailed guide on setting up and using this project, please refer to [INSTRUCTIONS.md](./INSTRUCTIONS.md). Additionally, the project's workflow is managed through [Github projects](https://github.com/users/puritybirir/projects/4).
 
-# Files
+## Features
 
-`src` contains all of our react code for this web app. For simplicity, we'll only discuss the files there.
+- **Task Management**: Create, edit, delete, and mark tasks as complete.
+- **Filtering & Sorting**: Filter tasks by status and sort them efficiently.
+- **Search**: Find tasks using a built-in search functionality.
+- **Responsive UI**: Optimized for desktop and mobile devices.
+- **Dark Mode**: Toggle between light and dark themes.
+- **Accessibility**: Keyboard navigation, ARIA attributes, and screen reader support.
 
-All code in `src`, with the exception of the `pages` directory, configures the common logic that all of our routes/components are built from.
+## Getting Started
 
-## Pages
+### Prerequisites
 
-This folder defines the pages that are rendered for the `Route` associated with each URL path. Inside we have source code and CSS for the following pages:
+Ensure you have the following installed:
 
-- Homepage
-- To-do list
-- Completed Tasks
+- Node.js (>= 14.x)
+- npm (or yarn)
 
-# Interacting with the DB
+### Installation
 
-We use json-server to create a mock server/DB based on the schema in `database/db.json`. You can perform CRUD operations on the DB using `axios`. Specifically, the following functions in `axios` represent the corresponding CRUD operations:
+1. Clone the repository:
 
-- Create: `axios.post`
-- Read: `axios.get`
-- Update: `axios.put`
-- Delete: `axios.delete`
+   ```sh
+   git clone git@github.com:puritybirir/todo-list.git
+   ```
 
-You can request all items in the DB by making a GET request to `http://localhost:3001/items`.
+2. Navigate into the project directory:
 
-You can request _specific_ items in the DB by using query parameters, i.e. `http://localhost:3001/items?isComplete=false`.
+   ```sh
+   cd todo-list
+   ```
 
-# Interview Question Instructions
+3. Install dependencies:
 
-_Please read the README before beginning this activity_
+   ```sh
+   npm install
+   ```
 
-### Requirements
+4. Start the app which also starts the jdon server:
 
-When implementing these tasks, you should follow basic CRUD principles, i.e.:
+   ```sh
+   npm start
+   ```
 
-- Allow users to **create** new todo's.
-- Allow users to **read** todo's (this is mainly completed for you already).
-- Allow users to **update** existing todo's (i.e. change `isCompleted` to `true`).
-- Allow users to **delete** todo's. (Should work for completed and non-completed items)
+5. Open the app in your browser or postman at `http://localhost:3000`.
 
-**Required:**
+## API Endpoints
 
-1. A progress tracker in the homepage - a pie chart showing the percentage of completed and to-do tasks.\*\*
-   ![Local Image](./public/tracker.png)
+The application interacts with a JSON Server running at `http://localhost:3001`:
 
-2. Improve the UI/UX of the app! This is intentially left open-ended to give you an opportuninty to show off your skills!
+- `GET /items` → Fetch all to-do items.
+- `POST /items` → Add a new to-do item.
+- `PUT /items/:id` → Update a to-do item.
+- `DELETE /items/:id` → Remove a to-do item.
 
-   a. Some Ideas are:
+## Customization
 
-   - Create list button to create different task groups with to-dos
-   - ⁠Show the lists as a sidepanel
-   - Add a progress tracking bar for each list
-   - Add a calender to save and show the date and time when the to-do is created and completed
-   - Filter starred items
-   - Filter by date
-   - Move completed items back to To-do
+Modify CSS variables in the `:root` selector and DesignSystem.css to customize:
 
-## Nice to have (bonus points, not required)
+- Colors
+- Typography
+- Spacing
+- Shadows
+- Transitions
 
-- The following tasks are nice to have and are **not** required for this activity. If you feel that your task is a bonus task, please explain. This can include, but is not limited to:
+## Future Enhancements
 
-  - Improvements to functionality (i.e. an improvement or new feature you came up with on your own)
+- Task categories and tags
+- Due dates and reminders
+- Drag-and-drop task reordering
+- Collaboration features
+- Data export/import
+- Offline support with local storage
 
-## Important Notes
-
-Please keep the following rules in mind when completing this activity:
-
-1. **Keep this question confidential**. Do not discuss and/or share the details of this question with anyone else.
-2. **Each task requires some fullstack change**.
-
-   a. If you add new field(s) to the schema, you need to make sure that the change is backwards-compatible with the original version. Make sure you're also filtering your queries appropriately.
-
-   b. **If you are adding create, update, or delete logic, the user MUST have some way to trigger this via the UI.**
-
-3. **Maintain reactive design**. The app should be readable and functional amongst a variety of different devices and screen sizes.
-4. Ask for help anytime if something doesn't make sense or you become stuck.
+---
