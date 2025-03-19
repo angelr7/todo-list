@@ -6,7 +6,7 @@ import logo from "./logo.svg";
 
 // Pages
 import { HomePage } from "./pages/HomePage";
-import { ToDoItemsPage } from "./pages/TodoItemsPage";
+import ToDoItemsPage from "./pages/TodoItemsPage";
 import { CompletedItemsPage } from "./pages/CompletedItemsPage";
 
 // Styles
