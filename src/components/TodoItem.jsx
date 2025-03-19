@@ -32,7 +32,8 @@ const TodoItem = memo(({ item, onTodoUpdated }) => {
   const handleStatusToggle = useCallback(() => {
     const updatedTodo = {
       ...item,
-      completed: !item.completed,
+      // Here we need to map 'completed' to 'isComplete' for the API
+      isComplete: !item.completed,
       updated_at: new Date().toISOString(),
     };
 
@@ -68,6 +69,8 @@ const TodoItem = memo(({ item, onTodoUpdated }) => {
       ...item,
       heading: editForm.heading,
       body: editForm.body,
+      // Make sure we preserve the isComplete property for the API
+      isComplete: item.completed || item.isComplete,
       updated_at: new Date().toISOString(),
     };
 
@@ -139,6 +142,10 @@ const TodoItem = memo(({ item, onTodoUpdated }) => {
       body: item.body,
     });
   }, [item]);
+
+  // Get the completion status, handling either property name
+  const isCompleted =
+    item.completed !== undefined ? item.completed : item.isComplete;
 
   // Conditional rendering for edit mode
   if (isEditing) {
@@ -243,8 +250,8 @@ const TodoItem = memo(({ item, onTodoUpdated }) => {
         </button>
 
         <div className="todo-card-footer">
-          <div className={`todo-status ${item.completed ? "completed" : ""}`}>
-            {item.completed ? "Completed" : "Active"}
+          <div className={`todo-status ${isCompleted ? "completed" : ""}`}>
+            {isCompleted ? "Completed" : "Active"}
           </div>
           <div className="todo-created-date">
             {formatDate(item.created_at || new Date())}
@@ -257,7 +264,7 @@ const TodoItem = memo(({ item, onTodoUpdated }) => {
             className="todo-action-button status-toggle"
             onClick={handleStatusToggle}
           >
-            {item.completed ? "Mark Active" : "Mark Complete"}
+            {isCompleted ? "Mark Active" : "Mark Complete"}
           </button>
 
           <button
@@ -283,7 +290,7 @@ const TodoItem = memo(({ item, onTodoUpdated }) => {
   return (
     <>
       <div
-        className={`todo-card ${item.completed ? "completed" : ""}`}
+        className={`todo-card ${isCompleted ? "completed" : ""}`}
         onClick={openModal}
       >
         <div className="todo-card-header">
@@ -306,8 +313,8 @@ const TodoItem = memo(({ item, onTodoUpdated }) => {
         </button>
 
         <div className="todo-card-footer">
-          <div className={`todo-status ${item.completed ? "completed" : ""}`}>
-            {item.completed ? "Completed" : "Active"}
+          <div className={`todo-status ${isCompleted ? "completed" : ""}`}>
+            {isCompleted ? "Completed" : "Active"}
           </div>
           <div className="todo-created-date">
             {formatDate(item.created_at || new Date())}
@@ -323,7 +330,7 @@ const TodoItem = memo(({ item, onTodoUpdated }) => {
               handleStatusToggle();
             }}
           >
-            {item.completed ? "Mark Active" : "Mark Complete"}
+            {isCompleted ? "Mark Active" : "Mark Complete"}
           </button>
 
           <button
@@ -353,7 +360,10 @@ const TodoItem = memo(({ item, onTodoUpdated }) => {
       {/* Modal for viewing full task details - only rendered when open */}
       {isModalOpen && (
         <TodoModal
-          item={item}
+          item={{
+            ...item,
+            completed: isCompleted, // Ensure consistent property naming
+          }}
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onStatusChange={handleStatusToggle}
@@ -378,6 +388,7 @@ TodoItem.propTypes = {
     heading: PropTypes.string.isRequired,
     body: PropTypes.string.isRequired,
     completed: PropTypes.bool,
+    isComplete: PropTypes.bool, // Added to support API property
     created_at: PropTypes.string,
     updated_at: PropTypes.string,
   }).isRequired,

@@ -111,12 +111,15 @@ export const CompletedItemsPage = () => {
 
     // We have items, show them in a grid
     return (
-      <div className="todo-list">
+      <div className="todo-grid">
         {completedItems.map((item) => (
           <TodoItem
             key={item.id}
-            item={item}
-            isLast={false} /* We don't need isLast with grid layout */
+            item={{
+              ...item,
+              // Map isComplete to completed for consistent prop naming
+              completed: item.isComplete,
+            }}
             onTodoUpdated={handleTodoChanged}
           />
         ))}

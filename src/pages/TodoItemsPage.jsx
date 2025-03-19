@@ -101,9 +101,14 @@ const ToDoItemsPage = () => {
   const getFilteredAndSortedTodos = () => {
     // Determine which todo list to use based on active tab
     let todosToShow = [];
-    if (activeTab === "all") todosToShow = allTodos;
-    else if (activeTab === "active") todosToShow = activeTodos;
-    else if (activeTab === "completed") todosToShow = completedTodos;
+
+    if (activeTab === "all") {
+      todosToShow = allTodos;
+    } else if (activeTab === "active") {
+      todosToShow = activeTodos;
+    } else if (activeTab === "completed") {
+      todosToShow = completedTodos;
+    }
 
     // Apply search filter if there's a search term
     if (searchTerm.trim()) {
@@ -183,7 +188,11 @@ const ToDoItemsPage = () => {
         {filteredTodos.map((item) => (
           <TodoItem
             key={item.id}
-            item={item}
+            item={{
+              ...item,
+              // Map isComplete to completed for consistency with TodoItem component
+              completed: item.isComplete,
+            }}
             onTodoUpdated={handleTodoChanged}
           />
         ))}

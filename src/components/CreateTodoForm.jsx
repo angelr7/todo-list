@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addTodo, selectTodoStatus } from "../state/todoSlice";
+import { useDispatch } from "react-redux";
+import { addTodo } from "../state/todoSlice";
 import "../styles/CreateTodoForm.css";
 
 /**
@@ -12,7 +12,6 @@ import "../styles/CreateTodoForm.css";
  */
 const CreateTodoForm = ({ onTodoAdded, onCancel }) => {
   const dispatch = useDispatch();
-  const status = useSelector(selectTodoStatus);
 
   const [formData, setFormData] = useState({
     heading: "",
