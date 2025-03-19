@@ -9,12 +9,18 @@ import {
 } from "recharts";
 import "../styles/HomePage.css";
 
-/**
- * Progress tracker component
- */
 const ProgressTracker = ({ completed, total }) => {
+  // Ensure valid numbers (handle NaN, undefined, null, and negative values)
+  const validTotal = isNaN(total) || total < 0 ? 0 : total;
+  const validCompleted = isNaN(completed) || completed < 0 ? 0 : completed;
+  const remaining = Math.max(validTotal - validCompleted, 0);
+
+  // Calculate completion percentage safely
+  const completionPercentage =
+    validTotal > 0 ? Math.round((validCompleted / validTotal) * 100) : 0;
+
   // Handles edge case when there's no data
-  if (total === 0) {
+  if (validTotal === 0) {
     return (
       <div className="progress-card">
         <div className="progress-header">
@@ -31,31 +37,25 @@ const ProgressTracker = ({ completed, total }) => {
     );
   }
 
-  // Ensure data values are valid numbers
-  const completedValue = isNaN(completed) ? 0 : completed;
-  const remainingValue = isNaN(total - completed) ? 0 : total - completed;
-
   // Data for the pie chart
   const data = [
-    { name: "Completed", value: completedValue, color: "var(--success)" },
-    { name: "To Do", value: remainingValue, color: "var(--divider)" },
+    { name: "Completed", value: validCompleted, color: "var(--success)" },
+    { name: "To Do", value: remaining, color: "var(--divider)" },
   ];
 
   // Filter out any entries with zero value to prevent chart rendering issues
   const filteredData = data.filter((entry) => entry.value > 0);
 
-  // Calculate completion percentage
-  const completionPercentage =
-    total > 0 ? Math.round((completed / total) * 100) : 0;
-
   // Legend component showing both numbers and percentages
   const Legend = () => {
     return (
-      <div className="chart-legend">
+      <div className="chart-legend" data-testid="legend-section">
         <div className="legend-title">Task Distribution</div>
         <div className="legend-items-container">
           {data.map((entry, index) => {
-            const itemPercentage = Math.round((entry.value / total) * 100);
+            const itemPercentage = validTotal
+              ? Math.round((entry.value / validTotal) * 100)
+              : 0;
             return (
               <div className="legend-item" key={`legend-${index}`}>
                 <div className="legend-header">
@@ -90,17 +90,23 @@ const ProgressTracker = ({ completed, total }) => {
       </div>
 
       <div className="progress-body">
-        <div className="stats-grid">
+        <div className="stats-grid" data-testid="stats-grid">
           <div className="stat-card">
-            <span className="stat-value">{total}</span>
+            <span data-testid="total-tasks" className="stat-value">
+              {validTotal}
+            </span>
             <span className="stat-label">Total Tasks</span>
           </div>
           <div className="stat-card">
-            <span className="stat-value">{completed}</span>
+            <span data-testid="completed-tasks" className="stat-value">
+              {validCompleted}
+            </span>
             <span className="stat-label">Completed</span>
           </div>
           <div className="stat-card">
-            <span className="stat-value">{total - completed}</span>
+            <span data-testid="remaining-tasks" className="stat-value">
+              {remaining}
+            </span>
             <span className="stat-label">Remaining</span>
           </div>
         </div>
