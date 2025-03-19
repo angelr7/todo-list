@@ -1,10 +1,19 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { selectAllTodos, selectCompletedTodos } from "../state/todoSlice";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectAllTodos,
+  selectCompletedTodos,
+  fetchTodos,
+  selectTodoStatus,
+} from "../state/todoSlice";
 import ProgressTracker from "../components/ProgressTracker";
 import "../styles/HomePage.css";
 
 export const HomePage = () => {
+  const dispatch = useDispatch();
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
+  const status = useSelector(selectTodoStatus);
+
   // Get todos from Redux store
   const allTodos = useSelector(selectAllTodos);
   const completedTodos = useSelector(selectCompletedTodos);
@@ -12,6 +21,14 @@ export const HomePage = () => {
   // Calculate statistics
   const totalTasks = allTodos?.length || 0;
   const completedCount = completedTodos?.length || 0;
+
+  // Fetch all todos on component mount
+  useEffect(() => {
+    if (!initialLoadDone) {
+      dispatch(fetchTodos());
+      setInitialLoadDone(true);
+    }
+  }, [dispatch, initialLoadDone]);
 
   return (
     <div className="homepage">
@@ -22,7 +39,12 @@ export const HomePage = () => {
         </p>
       </div>
 
-      {totalTasks > 0 ? (
+      {status === "loading" && !initialLoadDone ? (
+        <div className="loading-state">
+          <div className="loader"></div>
+          <p>Loading your tasks...</p>
+        </div>
+      ) : totalTasks > 0 ? (
         <ProgressTracker completed={completedCount} total={totalTasks} />
       ) : (
         <div className="empty-state">
