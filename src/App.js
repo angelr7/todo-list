@@ -6,7 +6,7 @@ import logo from "./logo.svg";
 
 // Pages
 import { HomePage } from "./pages/HomePage";
-import { ToDoItemsPage } from "./pages/TodoItemsPage";
+import ToDoItemsPage from "./pages/TodoItemsPage";
 import { CompletedItemsPage } from "./pages/CompletedItemsPage";
 
 // Styles
@@ -105,9 +105,9 @@ function App() {
   return (
     <div className="app-shell">
       {/* Skip to main content link for accessibility */}
-      <a href="#main-content" className="skip-link">
+      {/* <a href="#main-content" className="skip-link">
         Skip to main content
-      </a>
+      </a> */}
 
       <AppHeader />
 
